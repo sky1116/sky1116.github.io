@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android,architecture,mvvm,jetpack,refactor,data binding,recyclerview,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前一篇開始導入了 RecyclerView，這一篇來試著改良一下 Adapter 吧。 CommonAdapter觀察一下目前的 Adapter，可以發現，Adapter 的變動因素只有兩個 - UserListItemBinding 和 UserInfo，採用 Liskov 原則讓他變成通用的 RecyclerView Adapter。 先將原本 UserAdapter.java 複製改名為 C">
+<meta name="keywords" content="android,architecture,mvvm,jetpack,refactor,data binding,recyclerview">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我的 MVVM 之路 (六) - RecyclerView Adapter">
+<meta property="og:url" content="http://yoursite.com/2019/04/05/My-Way-To-MVVM-6/index.html">
+<meta property="og:site_name" content="鋼索上的大頭人蔘">
+<meta property="og:description" content="前一篇開始導入了 RecyclerView，這一篇來試著改良一下 Adapter 吧。 CommonAdapter觀察一下目前的 Adapter，可以發現，Adapter 的變動因素只有兩個 - UserListItemBinding 和 UserInfo，採用 Liskov 原則讓他變成通用的 RecyclerView Adapter。 先將原本 UserAdapter.java 複製改名為 C">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-12-20T14:56:53.372Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我的 MVVM 之路 (六) - RecyclerView Adapter">
+<meta name="twitter:description" content="前一篇開始導入了 RecyclerView，這一篇來試著改良一下 Adapter 吧。 CommonAdapter觀察一下目前的 Adapter，可以發現，Adapter 的變動因素只有兩個 - UserListItemBinding 和 UserInfo，採用 Liskov 原則讓他變成通用的 RecyclerView Adapter。 先將原本 UserAdapter.java 複製改名為 C">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/05/My-Way-To-MVVM-6/">
+
+
+
+
+
+  <title>我的 MVVM 之路 (六) - RecyclerView Adapter | 鋼索上的大頭人蔘</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鋼索上的大頭人蔘</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/05/My-Way-To-MVVM-6/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鋼索上的大頭人蔘">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">我的 MVVM 之路 (六) - RecyclerView Adapter</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-05T09:55:06+00:00">
+                2019-04-05
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2020-12-20T14:56:53+00:00">
+                2020-12-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前一篇開始導入了 RecyclerView，這一篇來試著改良一下 Adapter 吧。</p>
+<h2 id="CommonAdapter"><a href="#CommonAdapter" class="headerlink" title="CommonAdapter"></a>CommonAdapter</h2><p>觀察一下目前的 Adapter，可以發現，Adapter 的變動因素只有兩個 - UserListItemBinding 和 UserInfo，採用 Liskov 原則讓他變成通用的 RecyclerView Adapter。</p>
+<p>先將原本 UserAdapter.java 複製改名為 CommonAdapter.java，接下來都是對這個檔案做修改。</p>
+<p>Data Binding 產生的實例都是繼承自 ViewDataBinding，所以把 Adapter 裡面的 UserListItemBinding 都替換成 ViewDataBinding。</p>
+<h3 id="ViewHolder"><a href="#ViewHolder" class="headerlink" title="ViewHolder"></a>ViewHolder</h3><p>首先先來處理 ViewHolder。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// private UserListItemBinding mItemBinding;</span></span><br><span class="line"><span class="keyword">private</span> ViewDataBinding mItemBinding;</span><br><span class="line"></span><br><span class="line"><span class="comment">// public ViewHolder(UserListItemBinding binding) &#123;</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ViewHolder</span><span class="params">(ViewDataBinding binding)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(binding.getRoot());</span><br><span class="line">    mItemBinding = binding;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>這時候，在 bind() 裡面 setUserInfo() 會產生錯誤，前面說過這個方法是根據 xml 裡面 variable 的 name 所產生的，但是 ViewDataBinding 並沒有跟任何 layout 綁定，自然不會產生任何 set 的方法，這時候可以使用 setVariable(int variableId, @Nullable Object value) 來替代，在那之前，先來幫 variable 的 name 改個通用一點的名字，因為目標是讓 Adapter 成為通用的，那 name 就使用統一的名稱，這裡把他改為 item (可自行改名，專案統一就好)。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">data</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">variable</span></span></span><br><span class="line"><span class="tag">     <span class="attr">name</span>=<span class="string">"item"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">type</span>=<span class="string">"test.sky.com.mymvvm.UserInfo"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">data</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>接下來回到 setVariable，裡面的參數 variabled 對應的是 variable 內的 name，可以使用 BR 來取得專案內 variable 的 name。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// mItemBinding.setUserinfo(userInfo);</span></span><br><span class="line">    mItemBinding.setVariable(BR.item, userInfo);</span><br><span class="line">    mItemBinding.executePendingBindings();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>這裡改完可以先重新 build 專案，檢查是否有錯誤。</p>
+<h3 id="onCreateViewHolder"><a href="#onCreateViewHolder" class="headerlink" title="onCreateViewHolder"></a>onCreateViewHolder</h3><p>接著是 onCreateViewHolder 這個方法，這裡稍微解釋一下，因為我們的 UserListItemBinding 是根據 user_list_item.xml build 後產生的，所以已經跟 layout 綁定了，但是 ViewDataBinding 只是一個單純的抽象類別且並沒有 inflate 方法，這裡就使用 DataBindingUtil.inflate 的方法來產生。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> CommonAdapter.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(@NonNull ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">    LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());</span><br><span class="line">    <span class="comment">// UserListItemBinding itemBinding = UserListItemBinding.inflate(layoutInflater, parent, false);</span></span><br><span class="line">    ViewDataBinding itemBinding = DataBindingUtil.inflate(layoutInflater, R.layout.user_list_item, parent, <span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ViewHolder(itemBinding);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="UserInfo"><a href="#UserInfo" class="headerlink" title="UserInfo"></a>UserInfo</h3><p>UserInfo 只是一個單純的資料類別，需要提煉一個父類別，配合 DiffUtil 的差異比對，建立一個 Comparable 的 interface 讓 UserInfo 來實作。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Comparable</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Comparable</span>&lt;<span class="title">T</span>&gt;&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">areItemsTheSame</span><span class="params">(T t)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">areContentsTheSame</span><span class="params">(T t)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接著把 DiffUtill 裡面的比對搬到 UserInfo 的實作。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInfo</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">UserInfo</span>&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String memberId;</span><br><span class="line">    <span class="keyword">public</span> String nickname;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> point;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">areItemsTheSame</span><span class="params">(UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.memberId.equals(userInfo.memberId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">areContentsTheSame</span><span class="params">(UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.nickname.equals(userInfo.nickname)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.point != userInfo.point) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="UserInfoDiffCallBack"><a href="#UserInfoDiffCallBack" class="headerlink" title="UserInfoDiffCallBack"></a>UserInfoDiffCallBack</h3><p>修改原本的 UserInfoDiffCallBack，除了替換 UserInfo，也把變數改成通用的命名。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// public class UserInfoDiffCallBack extends DiffUtil.Callback &#123;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ItemDiffCallBack</span> <span class="keyword">extends</span> <span class="title">DiffUtil</span>.<span class="title">Callback</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// private List&lt;UserInfo&gt; mOldUserInfos;</span></span><br><span class="line">    <span class="comment">// private List&lt;UserInfo&gt; mNewUserInfos;</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;? extends Comparable&gt; mOldItemList;</span><br><span class="line">    <span class="keyword">private</span> List&lt;? extends Comparable&gt; mNewItemList;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// public UserInfoDiffCallBack(List&lt;UserInfo&gt; oldUserInfos, List&lt;UserInfo&gt; newUserInfos) &#123;</span></span><br><span class="line">    <span class="comment">//     this.mOldUserInfos = oldUserInfos;</span></span><br><span class="line">    <span class="comment">//     this.mNewUserInfos = newUserInfos;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ItemDiffCallBack</span><span class="params">(List&lt;? extends Comparable&gt; oldItemList, List&lt;? extends Comparable&gt; newItemList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mOldItemList = oldItemList;</span><br><span class="line">        <span class="keyword">this</span>.mNewItemList = newItemList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOldListSize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// return mOldUserInfos != null ? mOldUserInfos.size() : 0;</span></span><br><span class="line">        <span class="keyword">return</span> mOldItemList != <span class="keyword">null</span> ? mOldItemList.size() : <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNewListSize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// return mNewUserInfos != null ? mNewUserInfos.size() : 0;</span></span><br><span class="line">        <span class="keyword">return</span> mNewItemList != <span class="keyword">null</span> ? mNewItemList.size() : <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">areItemsTheSame</span><span class="params">(<span class="keyword">int</span> oldItemPosition, <span class="keyword">int</span> newItemPosition)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// return mOldUserInfos.get(oldItemPosition).memberId.equals(mNewUserInfos.get(newItemPosition).memberId);</span></span><br><span class="line">        <span class="keyword">return</span> mOldItemList.get(oldItemPosition).areItemsTheSame(mNewItemList.get(newItemPosition));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">areContentsTheSame</span><span class="params">(<span class="keyword">int</span> oldItemPosition, <span class="keyword">int</span> newItemPosition)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="keyword">return</span> mOldItemList.get(oldItemPosition).areContentsTheSame(mNewItemList.get(newItemPosition));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最後把 Adapter 剩下還有 UserInfo 的地方都一併修改，然後重新 build 測試。</p>
+<h3 id="layout-resource"><a href="#layout-resource" class="headerlink" title="layout resource"></a>layout resource</h3><p>因為 onCreateViewHolder 的地方有做了調整，導致必須要認識 item 的 layout，這裡大致上有兩種做法，一種是在建構式新增參數，一種是使用抽象方法取得 layout 讓子類別去實作，在這會使用第一種作法，畢竟以通用 Adapter 為目標，希望不需要再另外繼承。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// public CommonAdapter(List&lt;UserInfo&gt; userInfoList) &#123;</span></span><br><span class="line"><span class="comment">//     mUserInfoList = userInfoList;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CommonAdapter</span><span class="params">(List&lt;? extends Comparable&gt; itemList, <span class="keyword">int</span> layoutRes)</span> </span>&#123;</span><br><span class="line">    mItemList = itemList;</span><br><span class="line">    mLayoutRes = layoutRes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> CommonAdapter.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(@NonNull ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());</span><br><span class="line">        <span class="comment">// UserListItemBinding itemBinding = UserListItemBinding.inflate(layoutInflater, parent, false);</span></span><br><span class="line"><span class="comment">//        ViewDataBinding itemBinding = DataBindingUtil.inflate(layoutInflater, R.layout.user_list_item, parent, false);</span></span><br><span class="line">        ViewDataBinding itemBinding = DataBindingUtil.inflate(layoutInflater, mLayoutRes, parent, <span class="keyword">false</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ViewHolder(itemBinding);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>接著到 MainActivity.java 把 UserAdapter 改成 CommonAdapter 就完成了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mUserAdapter = new UserAdapter(userInfoList);</span></span><br><span class="line">mUserAdapter = <span class="keyword">new</span> CommonAdapter(userInfoList, R.layout.user_list_item);</span><br></pre></td></tr></table></figure></p>
+<h3 id="完整程式碼"><a href="#完整程式碼" class="headerlink" title="完整程式碼"></a>完整程式碼</h3><h4 id="CommonAdapter-1"><a href="#CommonAdapter-1" class="headerlink" title="CommonAdapter"></a>CommonAdapter</h4><p>CommonAdapter.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommonAdapter</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">Adapter</span>&lt;<span class="title">CommonAdapter</span>.<span class="title">ViewHolder</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// private List&lt;UserInfo&gt; mUserInfoList;</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;? extends Comparable&gt; mItemList;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mLayoutRes;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewHolder</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// private UserListItemBinding mItemBinding;</span></span><br><span class="line">        <span class="keyword">private</span> ViewDataBinding mItemBinding;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// public ViewHolder(UserListItemBinding binding) &#123;</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ViewHolder</span><span class="params">(ViewDataBinding binding)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">super</span>(binding.getRoot());</span><br><span class="line">            mItemBinding = binding;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// public void bind(UserInfo userInfo) &#123;</span></span><br><span class="line">        <span class="comment">//    mItemBinding.setUserinfo(userInfo);</span></span><br><span class="line">        <span class="comment">//    mItemBinding.setVariable(BR.item, userInfo);</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(Comparable item)</span> </span>&#123;</span><br><span class="line">            mItemBinding.setVariable(BR.item, item);</span><br><span class="line">            mItemBinding.executePendingBindings();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// public CommonAdapter(List&lt;UserInfo&gt; userInfoList) &#123;</span></span><br><span class="line">    <span class="comment">//     mUserInfoList = userInfoList;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CommonAdapter</span><span class="params">(List&lt;? extends Comparable&gt; itemList, <span class="keyword">int</span> layoutRes)</span> </span>&#123;</span><br><span class="line">        mItemList = itemList;</span><br><span class="line">        mLayoutRes = layoutRes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> CommonAdapter.<span class="function">ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(@NonNull ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());</span><br><span class="line">        <span class="comment">// UserListItemBinding itemBinding = UserListItemBinding.inflate(layoutInflater, parent, false);</span></span><br><span class="line">        ViewDataBinding itemBinding = DataBindingUtil.inflate(layoutInflater, mLayoutRes, parent, <span class="keyword">false</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ViewHolder(itemBinding);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(ViewHolder holder, <span class="keyword">final</span> <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// UserInfo userInfo = mUserInfoList.get(position);</span></span><br><span class="line">    <span class="comment">// holder.bind(userInfo);</span></span><br><span class="line">        Comparable item = mItemList.get(position);</span><br><span class="line">        holder.bind(item);</span><br><span class="line">        holder.itemView.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                <span class="comment">// todo</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        holder.itemView.setOnLongClickListener(<span class="keyword">new</span> View.OnLongClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onLongClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                <span class="comment">// todo</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// return mUserInfoList.size();</span></span><br><span class="line">        <span class="keyword">return</span> mItemList.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// public void refresh(List&lt;UserInfo&gt; userInfoList) &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">(List&lt;? extends Comparable&gt; itemList)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new UserInfoDiffCallBack(mUserInfoList, userInfoList), true);</span></span><br><span class="line">        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(<span class="keyword">new</span> ItemDiffCallBack(mItemList, itemList), <span class="keyword">true</span>);</span><br><span class="line">        diffResult.dispatchUpdatesTo(<span class="keyword">this</span>);</span><br><span class="line">        <span class="comment">// mUserInfoList = userInfoList;</span></span><br><span class="line">        mItemList = itemList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// public class UserInfoDiffCallBack extends DiffUtil.Callback &#123;</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ItemDiffCallBack</span> <span class="keyword">extends</span> <span class="title">DiffUtil</span>.<span class="title">Callback</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private List&lt;UserInfo&gt; mOldUserInfos;</span></span><br><span class="line">        <span class="comment">// private List&lt;UserInfo&gt; mNewUserInfos;</span></span><br><span class="line">        <span class="keyword">private</span> List&lt;? extends Comparable&gt; mOldItemList;</span><br><span class="line">        <span class="keyword">private</span> List&lt;? extends Comparable&gt; mNewItemList;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// public UserInfoDiffCallBack(List&lt;UserInfo&gt; oldUserInfos, List&lt;UserInfo&gt; newUserInfos) &#123;</span></span><br><span class="line">        <span class="comment">//     this.mOldUserInfos = oldUserInfos;</span></span><br><span class="line">        <span class="comment">//     this.mNewUserInfos = newUserInfos;</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ItemDiffCallBack</span><span class="params">(List&lt;? extends Comparable&gt; oldItemList, List&lt;? extends Comparable&gt; newItemList)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.mOldItemList = oldItemList;</span><br><span class="line">            <span class="keyword">this</span>.mNewItemList = newItemList;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOldListSize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// return mOldUserInfos != null ? mOldUserInfos.size() : 0;</span></span><br><span class="line">            <span class="keyword">return</span> mOldItemList != <span class="keyword">null</span> ? mOldItemList.size() : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNewListSize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// return mNewUserInfos != null ? mNewUserInfos.size() : 0;</span></span><br><span class="line">            <span class="keyword">return</span> mNewItemList != <span class="keyword">null</span> ? mNewItemList.size() : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">areItemsTheSame</span><span class="params">(<span class="keyword">int</span> oldItemPosition, <span class="keyword">int</span> newItemPosition)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// return mOldUserInfos.get(oldItemPosition).memberId.equals(mNewUserInfos.get(newItemPosition).memberId);</span></span><br><span class="line">            <span class="keyword">return</span> mOldItemList.get(oldItemPosition).areItemsTheSame(mNewItemList.get(newItemPosition));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">areContentsTheSame</span><span class="params">(<span class="keyword">int</span> oldItemPosition, <span class="keyword">int</span> newItemPosition)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">            <span class="keyword">return</span> mOldItemList.get(oldItemPosition).areContentsTheSame(mNewItemList.get(newItemPosition));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="MainActivity"><a href="#MainActivity" class="headerlink" title="MainActivity"></a>MainActivity</h4><p>MainActivity.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ActivityMainBinding mBinding;</span><br><span class="line">    <span class="keyword">private</span> MainViewModel mMainViewModel;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> CommonAdapter mUserAdapter;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">        mBinding = DataBindingUtil.setContentView(<span class="keyword">this</span>, R.layout.activity_main);</span><br><span class="line">        mMainViewModel = ViewModelProviders.of(MainActivity.<span class="keyword">this</span>).get(MainViewModel.class);</span><br><span class="line"></span><br><span class="line">        mBinding.setViewmodel(mMainViewModel);</span><br><span class="line">        <span class="comment">// 將要觀察資料異動的 LifecycleOwner 設定給 DataBinding</span></span><br><span class="line">        mBinding.setLifecycleOwner(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ArrayList&lt;UserInfo&gt; userInfoList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="comment">//        mUserAdapter = new UserAdapter(getFakeUserInfoList());</span></span><br><span class="line">        mUserAdapter = <span class="keyword">new</span> CommonAdapter(userInfoList, R.layout.user_list_item);</span><br><span class="line">        <span class="keyword">final</span> LinearLayoutManager layoutManager = <span class="keyword">new</span> LinearLayoutManager(<span class="keyword">this</span>);</span><br><span class="line">        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);</span><br><span class="line">        <span class="comment">// 這邊直接就使用 binding 的方式來取得 RecyclerView</span></span><br><span class="line">        mBinding.userListRv.setLayoutManager(layoutManager);</span><br><span class="line">        mBinding.userListRv.setAdapter(mUserAdapter);</span><br><span class="line">        mBinding.userListRv.addItemDecoration(<span class="keyword">new</span> DividerItemDecoration(<span class="keyword">this</span>, DividerItemDecoration.VERTICAL));</span><br><span class="line"></span><br><span class="line">        mMainViewModel.mUserInfoList.observe(<span class="keyword">this</span>, <span class="keyword">new</span> Observer&lt;List&lt;UserInfo&gt;&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onChanged</span><span class="params">(@Nullable List&lt;UserInfo&gt; userInfos)</span> </span>&#123;</span><br><span class="line">                mUserAdapter.refresh(userInfos);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/architecture/" rel="tag"># architecture</a>
+          
+            <a href="/tags/mvvm/" rel="tag"># mvvm</a>
+          
+            <a href="/tags/jetpack/" rel="tag"># jetpack</a>
+          
+            <a href="/tags/refactor/" rel="tag"># refactor</a>
+          
+            <a href="/tags/data-binding/" rel="tag"># data binding</a>
+          
+            <a href="/tags/recyclerview/" rel="tag"># recyclerview</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/26/My-Way-To-MVVM-5/" rel="next" title="我的 MVVM 之路 (五) - RecyclerView">
+                <i class="fa fa-chevron-left"></i> 我的 MVVM 之路 (五) - RecyclerView
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/01/Learning-Kotlin-1/" rel="prev" title="Kotlin 學習筆記 (一)">
+                Kotlin 學習筆記 (一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sky</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sky1116" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CommonAdapter"><span class="nav-number">1.</span> <span class="nav-text">CommonAdapter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewHolder"><span class="nav-number">1.1.</span> <span class="nav-text">ViewHolder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#onCreateViewHolder"><span class="nav-number">1.2.</span> <span class="nav-text">onCreateViewHolder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UserInfo"><span class="nav-number">1.3.</span> <span class="nav-text">UserInfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UserInfoDiffCallBack"><span class="nav-number">1.4.</span> <span class="nav-text">UserInfoDiffCallBack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#layout-resource"><span class="nav-number">1.5.</span> <span class="nav-text">layout resource</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整程式碼"><span class="nav-number">1.6.</span> <span class="nav-text">完整程式碼</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CommonAdapter-1"><span class="nav-number">1.6.1.</span> <span class="nav-text">CommonAdapter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MainActivity"><span class="nav-number">1.6.2.</span> <span class="nav-text">MainActivity</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <!--
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+-->
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

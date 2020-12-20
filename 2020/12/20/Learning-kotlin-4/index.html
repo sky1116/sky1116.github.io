@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android,kotlin,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="字串及字元字串1var courseName = &quot;kotlin學習筆記(四)標題是字串及字元&quot; 字串長度及是否為空123println(courseName.count()) // 21println(courseName.isEmpty()) // falseprintln(courseName.length) // 21 取得指定位置的字元12345println(courseName.ge">
+<meta name="keywords" content="android,kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin 學習筆記 (四)">
+<meta property="og:url" content="http://yoursite.com/2020/12/20/Learning-kotlin-4/index.html">
+<meta property="og:site_name" content="鋼索上的大頭人蔘">
+<meta property="og:description" content="字串及字元字串1var courseName = &quot;kotlin學習筆記(四)標題是字串及字元&quot; 字串長度及是否為空123println(courseName.count()) // 21println(courseName.isEmpty()) // falseprintln(courseName.length) // 21 取得指定位置的字元12345println(courseName.ge">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-12-20T14:56:53.372Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kotlin 學習筆記 (四)">
+<meta name="twitter:description" content="字串及字元字串1var courseName = &quot;kotlin學習筆記(四)標題是字串及字元&quot; 字串長度及是否為空123println(courseName.count()) // 21println(courseName.isEmpty()) // falseprintln(courseName.length) // 21 取得指定位置的字元12345println(courseName.ge">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/12/20/Learning-kotlin-4/">
+
+
+
+
+
+  <title>Kotlin 學習筆記 (四) | 鋼索上的大頭人蔘</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鋼索上的大頭人蔘</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/20/Learning-kotlin-4/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鋼索上的大頭人蔘">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kotlin 學習筆記 (四)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-12-20T15:51:35+00:00">
+                2020-12-20
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Post modified&#58;</span>
+              
+              <time title="Post modified" itemprop="dateModified" datetime="2020-12-20T14:56:53+00:00">
+                2020-12-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="字串及字元"><a href="#字串及字元" class="headerlink" title="字串及字元"></a>字串及字元</h2><h2 id="字串"><a href="#字串" class="headerlink" title="字串"></a>字串</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> courseName = <span class="string">"kotlin學習筆記(四)標題是字串及字元"</span></span><br></pre></td></tr></table></figure>
+<h3 id="字串長度及是否為空"><a href="#字串長度及是否為空" class="headerlink" title="字串長度及是否為空"></a>字串長度及是否為空</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(courseName.count()) <span class="comment">// 21</span></span><br><span class="line">println(courseName.isEmpty()) <span class="comment">// false</span></span><br><span class="line">println(courseName.length) <span class="comment">// 21</span></span><br></pre></td></tr></table></figure>
+<h3 id="取得指定位置的字元"><a href="#取得指定位置的字元" class="headerlink" title="取得指定位置的字元"></a>取得指定位置的字元</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">println(courseName.<span class="keyword">get</span>(<span class="number">9</span>)) <span class="comment">// 記</span></span><br><span class="line">println(courseName.elementAt(<span class="number">9</span>)) <span class="comment">// 記</span></span><br><span class="line"></span><br><span class="line">println(courseName.first()) <span class="comment">// k</span></span><br><span class="line">println(courseName.last()) <span class="comment">// 元</span></span><br></pre></td></tr></table></figure>
+<h3 id="截取字串"><a href="#截取字串" class="headerlink" title="截取字串"></a>截取字串</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println(courseName.substring(<span class="number">10</span>)) <span class="comment">// (四)標題是字串及字元</span></span><br><span class="line">println(courseName.substring(<span class="number">16</span>)) <span class="comment">// 字串及字元</span></span><br><span class="line">println(courseName.substring(<span class="number">10</span>, <span class="number">13</span>)) <span class="comment">// (四)</span></span><br></pre></td></tr></table></figure>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">println(courseName.substring(courseName.indexOf(<span class="string">"("</span>))) <span class="comment">// (四)標題是字串及字元</span></span><br><span class="line">println(courseName.substring(courseName.indexOf(<span class="string">"("</span>), <span class="number">13</span>)) <span class="comment">// (四)</span></span><br><span class="line">println(courseName.indices) <span class="comment">// 0..20</span></span><br><span class="line">println(courseName.lastIndex) <span class="comment">// 20</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否包含字串或字元"><a href="#是否包含字串或字元" class="headerlink" title="是否包含字串或字元"></a>是否包含字串或字元</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println(courseName.contains(<span class="string">"四"</span>)) <span class="comment">// true</span></span><br><span class="line">println(courseName.contains(<span class="string">"五"</span>)) <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+<h3 id="判斷字串內容是否相同"><a href="#判斷字串內容是否相同" class="headerlink" title="判斷字串內容是否相同"></a>判斷字串內容是否相同</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> courseName1 = <span class="string">"kotlin學習筆記(四)"</span></span><br><span class="line"><span class="keyword">val</span> courseName2 = <span class="string">"kotlin學習筆記(四)標題是字串及字元"</span></span><br><span class="line"></span><br><span class="line">println(courseName == courseName1) <span class="comment">// false</span></span><br><span class="line">println(courseName.contentEquals(courseName1)) <span class="comment">//false</span></span><br><span class="line">println(courseName == courseName2) <span class="comment">// true</span></span><br><span class="line">println(courseName.contentEquals(courseName2)) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h3 id="捨棄字元"><a href="#捨棄字元" class="headerlink" title="捨棄字元"></a>捨棄字元</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> targetStr = <span class="string">"abcdefghijk"</span></span><br><span class="line"><span class="comment">// 捨棄前 3 個字元</span></span><br><span class="line">println(targetStr.drop(<span class="number">3</span>)) <span class="comment">// defghijk</span></span><br><span class="line"><span class="comment">// 捨棄後面 4 個字元</span></span><br><span class="line">println(targetStr.dropLast(<span class="number">4</span>)) <span class="comment">// abcdefg</span></span><br></pre></td></tr></table></figure>
+<p>使用有條件的捨去 - <code>dropWhile</code>，{} 為迴圈，變數 <code>it</code> 是代表字串中的字元</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> targetStr = <span class="string">"  abcde XX"</span></span><br><span class="line"><span class="comment">// 只要第一個字元為空白就捨棄</span></span><br><span class="line">println(targetStr.dropWhile &#123; it.isWhitespace() &#125;) <span class="comment">// abcde XX</span></span><br><span class="line"><span class="comment">// 去除前面的空白後再檢查結尾字元，只要是 X 或是空白都捨棄</span></span><br><span class="line">println(targetStr.dropWhile &#123; it.isWhitespace() &#125;.dropLastWhile &#123; it == <span class="string">'X'</span> || it.isWhitespace() &#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="取得字元"><a href="#取得字元" class="headerlink" title="取得字元"></a>取得字元</h3><p>跟 <code>drop</code> 剛好相反，使用 <code>take</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> targetStr = <span class="string">"abcdefghijk"</span></span><br><span class="line"><span class="comment">// 取得前 3 個字元</span></span><br><span class="line">println(targetStr.take(<span class="number">3</span>)) <span class="comment">// abc</span></span><br><span class="line"><span class="comment">// 取得後面 4 個字元</span></span><br><span class="line">println(targetStr.takeLast(<span class="number">4</span>)) <span class="comment">// hijk</span></span><br></pre></td></tr></table></figure>
+<p>跟 <code>drop</code> 一樣，也有條件式取得 <code>takeWhile</code> 跟 <code>takeLastWhile</code></p>
+<h3 id="取代字元"><a href="#取代字元" class="headerlink" title="取代字元"></a>取代字元</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> targetStr = <span class="string">"abcde"</span></span><br><span class="line">println(targetStr.replace(<span class="string">"abc"</span>, <span class="string">"123"</span>)) <span class="comment">// 123de</span></span><br><span class="line">println(targetStr.replace(<span class="string">'e'</span>, <span class="string">'5'</span>)) <span class="comment">// abcd5</span></span><br></pre></td></tr></table></figure>
+<h3 id="字串轉為字元陣列"><a href="#字串轉為字元陣列" class="headerlink" title="字串轉為字元陣列"></a>字串轉為字元陣列</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// k,o,t,l,i,n,學,習,筆,記,(,四,),標,題,是,字,串,及,字,元,</span></span><br><span class="line">println(courseName.toCharArray().forEach &#123; print(it + <span class="string">","</span>) &#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="字元"><a href="#字元" class="headerlink" title="字元"></a>字元</h2><p>使用單引號表示字元</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> me = <span class="string">'我'</span></span><br><span class="line"><span class="keyword">val</span> five = <span class="string">'5'</span></span><br></pre></td></tr></table></figure>
+<h3 id="判斷是否為數字或文字"><a href="#判斷是否為數字或文字" class="headerlink" title="判斷是否為數字或文字"></a>判斷是否為數字或文字</h3><p>使用 <code>isDigit()</code> 和 <code>isLetter()</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println(five.isDigit()) <span class="comment">// true</span></span><br><span class="line">println(me.isLetter()) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h3 id="前一個或後一個字元"><a href="#前一個或後一個字元" class="headerlink" title="前一個或後一個字元"></a>前一個或後一個字元</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println(five -<span class="number">1</span>) <span class="comment">// 4</span></span><br><span class="line">println(me + <span class="number">1</span>) <span class="comment">// 戒</span></span><br></pre></td></tr></table></figure>
+<h3 id="其他字元用法"><a href="#其他字元用法" class="headerlink" title="其他字元用法"></a>其他字元用法</h3><p>取得字元編碼</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(me.toInt()) <span class="comment">// 25105</span></span><br></pre></td></tr></table></figure>
+<p>字串字元串連</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str1 = <span class="string">"abc"</span></span><br><span class="line">str1 += (<span class="string">'1'</span> + <span class="string">"23"</span> + <span class="string">'.'</span>)</span><br><span class="line">print(str1) <span class="comment">// abc123.</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/kotlin/" rel="tag"># kotlin</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/20/Learning-kotlin-3/" rel="next" title="Kotlin 學習筆記 (三)">
+                <i class="fa fa-chevron-left"></i> Kotlin 學習筆記 (三)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sky</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sky1116" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#字串及字元"><span class="nav-number">1.</span> <span class="nav-text">字串及字元</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字串"><span class="nav-number">2.</span> <span class="nav-text">字串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字串長度及是否為空"><span class="nav-number">2.1.</span> <span class="nav-text">字串長度及是否為空</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取得指定位置的字元"><span class="nav-number">2.2.</span> <span class="nav-text">取得指定位置的字元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#截取字串"><span class="nav-number">2.3.</span> <span class="nav-text">截取字串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引"><span class="nav-number">2.4.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#是否包含字串或字元"><span class="nav-number">2.5.</span> <span class="nav-text">是否包含字串或字元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判斷字串內容是否相同"><span class="nav-number">2.6.</span> <span class="nav-text">判斷字串內容是否相同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#捨棄字元"><span class="nav-number">2.7.</span> <span class="nav-text">捨棄字元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取得字元"><span class="nav-number">2.8.</span> <span class="nav-text">取得字元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取代字元"><span class="nav-number">2.9.</span> <span class="nav-text">取代字元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字串轉為字元陣列"><span class="nav-number">2.10.</span> <span class="nav-text">字串轉為字元陣列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字元"><span class="nav-number">3.</span> <span class="nav-text">字元</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#判斷是否為數字或文字"><span class="nav-number">3.1.</span> <span class="nav-text">判斷是否為數字或文字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前一個或後一個字元"><span class="nav-number">3.2.</span> <span class="nav-text">前一個或後一個字元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他字元用法"><span class="nav-number">3.3.</span> <span class="nav-text">其他字元用法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <!--
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+-->
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
